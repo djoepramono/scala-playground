@@ -1,17 +1,4 @@
-package net.studikode.scala.fundamentals
-
-/**
- * Case class is pretty much the same as regular classes, except
- * - immutable
- * - can be pattern matched
- * When not to use? When it contains complex behaviour or stateful computations
- */
-
-/**
- * abstract class or trait?
- * abstract classes have constructor and type parameters
- * a class can inherit from one abstract classes but multiple trait
- */
+package net.studikode.scala.samples
 
 abstract class Course(length: Int)
 trait FastTrack {}
@@ -48,7 +35,6 @@ object School {
 
   def main(args: Array[String]): Unit = {
 
-    // Note that there is no *new* in case class
     val IT = RegularCourse(4, true)
     val ShortIT = FastCourse(2,false)
     val RemoteIT = OnlineCourse(4, true)
@@ -63,5 +49,4 @@ object School {
     val result = courses.map(x => isItEligibleForGovernmentFunding(x))
     println(result)
   }
-
 }
