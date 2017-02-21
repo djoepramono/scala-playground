@@ -1,4 +1,4 @@
-package net.studikode.patterns
+package net.studikode.fundamentals
 
 object PatternMatching {
   def main(args: Array[String]) = {
@@ -7,7 +7,6 @@ object PatternMatching {
      * Pattern Matching, similar to switch in other programming language
      * _ means "everything else" or the default
      */
-    println("Pattern Matching")
     def intToString(x: Int): String = x match {
       case 1 => "one"
       case 2 => "two"
@@ -17,9 +16,8 @@ object PatternMatching {
     println(intToString(1))
 
     /**
-     *
+     * 
      */
-    println("Pattern Matching part 2")
     def myFold(l: List[Int]): List[Int] = l match {
       case h :: t => {
         println(h)

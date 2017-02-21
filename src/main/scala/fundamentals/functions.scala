@@ -1,4 +1,4 @@
-package net.studikode
+package net.studikode.scala.fundamentals
 
 object HigherOrderFunction  {
   def main(args: Array[String]): Unit  = {
