@@ -8,8 +8,8 @@ object Fold{
     /**
      * This basically says
      * start with an integer 0
-     * add 0 with the first integer (1) on the right
-     *  then add the result to next integer (2) on the right
+     * add 0 with the left most element in the list (1)
+     *  then add the result with the next element on the right (2)
      *  and so on ...
      * continue this until the last integer
      */
