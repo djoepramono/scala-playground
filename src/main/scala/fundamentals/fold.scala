@@ -15,7 +15,7 @@ object Fold{
      */
     val result = myList.foldLeft(0) {
       (x,y) => {
-        println(s"${x} + ${y} is ${x+y}")
+        println(s"${x} + ${y} is ${x+y}") // 15
         x + y
       }
     }
@@ -35,7 +35,7 @@ object Fold{
       }
     }
 
-    println(s"So the result of just-folding ${myLongerList} is ${result2}")
+    println(s"So the result of just-folding ${myLongerList} is ${result2}") // 26
 
     /**
      * Things go a little bit differently with `foldRight`
@@ -47,7 +47,7 @@ object Fold{
       addXandY(_,_)
     }
 
-    println(s"So the result of right-folding ${myList} is ${result3}")
+    println(s"So the result of right-folding ${myList} is ${result3}") // 15
   }
 
   def addXandY(x: Int, y: Int):Int = {
