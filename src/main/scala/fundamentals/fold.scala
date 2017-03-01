@@ -40,14 +40,18 @@ object Fold{
     /**
      * Things go a little bit differently with `foldRight`
      * The end result is still the same but the sequence changes
+     * And just for fun, let's use a pre-defined function instead of a lambda
+     *  there you can notice that we use _ which means anything on that element
      */
     val result3 = myList.foldRight(0) {
-      (x,y) => {
-        println(s"${x} + ${y} is ${x+y}")
-        x + y
-      }
+      addXandY(_,_)
     }
 
     println(s"So the result of right-folding ${myList} is ${result3}")
+  }
+
+  def addXandY(x: Int, y: Int):Int = {
+    println(s"${x} + ${y} is ${x+y}")
+    x + y
   }
 }
