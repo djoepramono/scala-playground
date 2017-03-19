@@ -4,6 +4,7 @@ abstract class Fruit
 trait Local
 trait Seedless
 // Multiple inheritance
+// Or really it is more like Composition rather than inheritance
 case class Banana() extends Fruit with Local with Seedless
 case class Apple() extends Fruit with Local with Seedless
 

@@ -5,7 +5,7 @@ Case class is pretty much the same as regular classes, except
 - it can be pattern matched
 - it can be instantiated without `new` syntax
 
-This is extremely useful in data modeling world when you are doing
+This is extremely useful in data modeling world when you are
 performing an operation on a specific data structure.
 You can break down data into pieces with traits and abstract classes.  
 
@@ -23,6 +23,6 @@ Abstract class can have constructor.
 Basically it serves the same purpose as abstract classes,
 but a class can inherit from multiple trait.
 This is at the cost of you cannot put a constructor there.
+You can think of traits as a Scala way of dealing with multiple inheritance..
 
-So basically traits is Scala way of dealing with multiple inheritance.
-Though again in it's more data modeling not object modeling.
+Behavior rather than implementation through function signature

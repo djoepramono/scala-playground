@@ -42,6 +42,7 @@ object Fold{
      * The end result is still the same but the sequence changes
      * And just for fun, let's use a pre-defined function instead of a lambda
      *  there you can notice that we use _ which means anything on that element
+     * This is especially useful in a data structure that contains infinite element for example 
      */
     val result3 = myList.foldRight(0) {
       addXandY(_,_)
