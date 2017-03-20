@@ -11,5 +11,6 @@ libraryDependencies ++= Seq(
   "io.circe"  %% "circe-core"     % circeVersion,
   "io.circe"  %% "circe-generic"  % circeVersion,
   "io.circe"  %% "circe-parser"   % circeVersion,
-  "net.databinder.dispatch" %% "dispatch-core" % "0.12.0"
+  "net.databinder.dispatch" %% "dispatch-core" % "0.12.0",
+  "org.scalaz" %% "scalaz-core"   % "7.2.10"
 )
