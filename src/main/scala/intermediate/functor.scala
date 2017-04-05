@@ -22,6 +22,8 @@ import cats.implicits._
  */
 object Functor {
 
+  type StringOr[A] = Either[String, A]
+
   /**
    * This function accept a functor (e.g. List or Option)
    *   and transform its type and value
@@ -35,7 +37,8 @@ object Functor {
   def main(args: Array[String]): Unit = {
     println(addOneToString(List(1)))
     println(addOneToString(Option(1)))
-    // println(addOneToString(Right(1)))  // Apparently Either is not a functor
+    // Apparently Either is kind of a functor if you partially applied the type AND explicitly set the type
+    println(addOneToString(Right(1) : StringOr[Int])) 
   }
 
 
