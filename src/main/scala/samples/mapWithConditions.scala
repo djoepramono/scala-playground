@@ -83,12 +83,12 @@ object MapNWithConditions {
       Patron("Arnold", Some(Premium))
       , Patron("Jacob", Some(Standard))
       , Patron("Jerry", Some(Standard))
-      // , Patron("Micah", None)
+      , Patron("Micah", None)
     )
 
     val futures: List[Future[CheckResult]] = friends
       .map(
-        f => (checkMembership(f.membership.get), checkBlackList(f.name)).map2(
+        f => (checkMaybeMembership(checkMembership)(f.membership), checkBlackList(f.name)).map2(
           // (freebies: List[Perk], isBlacklisted: Boolean) => {
           //   CheckResult(f.name, isBlacklisted, freebies)
           // }
