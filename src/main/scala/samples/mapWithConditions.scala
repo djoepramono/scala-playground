@@ -13,6 +13,7 @@ case object Standard extends Membership
 sealed trait Perk
 case object FreeDrink extends Perk
 case object EarlyAccess extends Perk
+case object NoPerk extends Perk
 
 case class Patron (name: String, membership: Option[Membership])
 case class CheckResult (name: String, isBlacklisted: Boolean, freebies: List[Perk]) {
@@ -35,8 +36,8 @@ object MapNWithConditions {
   }
 
   def checkBlackList(n:String): Future[Boolean] = {
-    // Future {(n == "Jerry")}
-    Future {throw new Exception("Rawr")}
+    Future {(n == "Jerry")}
+    // Future {throw new Exception("Rawr")}
   }
 
 
@@ -45,8 +46,36 @@ object MapNWithConditions {
     CheckResult(name, isBlacklisted, freebies)
   }
 
-  def futureToFutureTry[T](f: Future[T]): Future[Try[T]] =    
+  def futureToFutureTry[T](f: Future[T]): Future[Try[T]] =
     f.map(Success(_)).recover({case e => Failure(e)})
+
+  /**
+   * `pure` should take a value of any type and return an applicative value with that value inside it.
+   * A better way of thinking about pure would be to say that it takes a value and puts it in some sort of default (or pure) context
+   */
+  // def succeedsIfNone[F[_] : Functor, A, B](verifier: A => F[FailsWithVerificationErrors[B]])
+  //                                         (input: Option[A]):
+  //   F[FailsWithVerificationErrors[Option[B]]] = {
+  //   input match {
+  //     case None => Right(None).pure
+  //     case Some(x) => verifier(x).map(_.map(v => Some(v)))
+  //   }
+  // }
+
+ /**
+  * Lift checkMembership to accept Option[Membership]
+  * Think it like A = membership, B = perk
+  */
+ def checkMaybeMembership[A,B](f: A => Future[List[B]])
+                              (o: Option[A])
+ : Future[List[B]] = {
+   o match {
+     case Some(x) => f(x)
+     case None => Future {List[B]()}
+   }
+ }
+
+
 
   def main(args: Array[String]): Unit = {
 
