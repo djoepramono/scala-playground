@@ -1,4 +1,4 @@
-package net.studikode.scala.samples
+package net.studikode.scala.samples.bouncer
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future, Await}
@@ -6,23 +6,7 @@ import cats.implicits._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{ Failure, Success, Try }
 
-sealed trait Membership
-case object Premium extends Membership
-case object Standard extends Membership
-
-sealed trait Perk
-case object FreeDrink extends Perk
-case object EarlyAccess extends Perk
-case object NoPerk extends Perk
-
-case class Patron (name: String, membership: Option[Membership])
-case class CheckResult (name: String, isBlacklisted: Boolean, freebies: List[Perk]) {
-  def print: String = {
-    s"Checking: ${name}, Blacklisted? ${isBlacklisted}, Freebies: ${freebies}"
-  }
-}
-
-object MapNWithConditions {
+object BouncerLatest {
 
   val ec = ExecutionContext.global
 
@@ -50,32 +34,17 @@ object MapNWithConditions {
     f.map(Success(_)).recover({case e => Failure(e)})
 
   /**
-   * `pure` should take a value of any type and return an applicative value with that value inside it.
-   * A better way of thinking about pure would be to say that it takes a value and puts it in some sort of default (or pure) context
+   * Lift checkMembership to accept Option[Membership]
+   * Think it like A = membership, B = perk
    */
-  // def succeedsIfNone[F[_] : Functor, A, B](verifier: A => F[FailsWithVerificationErrors[B]])
-  //                                         (input: Option[A]):
-  //   F[FailsWithVerificationErrors[Option[B]]] = {
-  //   input match {
-  //     case None => Right(None).pure
-  //     case Some(x) => verifier(x).map(_.map(v => Some(v)))
-  //   }
-  // }
-
- /**
-  * Lift checkMembership to accept Option[Membership]
-  * Think it like A = membership, B = perk
-  */
- def checkMaybeMembership[A,B](f: A => Future[List[B]])
+  def checkMaybeMembership[A,B](f: A => Future[List[B]])
                               (o: Option[A])
- : Future[List[B]] = {
+  : Future[List[B]] = {
    o match {
      case Some(x) => f(x)
      case None => Future {List[B]()}
    }
- }
-
-
+  }
 
   def main(args: Array[String]): Unit = {
 
@@ -89,9 +58,6 @@ object MapNWithConditions {
     val futures: List[Future[CheckResult]] = friends
       .map(
         f => (checkMaybeMembership(checkMembership)(f.membership), checkBlackList(f.name)).map2(
-          // (freebies: List[Perk], isBlacklisted: Boolean) => {
-          //   CheckResult(f.name, isBlacklisted, freebies)
-          // }
           createCheckResult(_,_)(f.name)
         )
       )
@@ -100,8 +66,7 @@ object MapNWithConditions {
 
     val liftedFutures = futures.map(futureToFutureTry(_))
 
-    // List[Future[A]] to Future[List[A]]
-    // val futureOfList = Future.sequence(futures)
+    // List[Future[A]] to Future[List[A]]    
     val futureOfListofSuccess = Future.sequence(liftedFutures).map(_.filter(_.isSuccess))
     val futureOfListofFailures = Future.sequence(liftedFutures).map(_.filter(_.isFailure))
 
