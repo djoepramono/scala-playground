@@ -34,10 +34,10 @@ object BouncerO {
 
     val futures: List[Future[CheckResult]] = friends
       .map(
-        f => (checkMembership(f.membership.get), checkBlackList(f.name)).map(
-               _.map(
-               (bool) => {}
-             )
+        f => (checkMembership(f.membership.get), checkBlackList(f.name)).map2(
+          (freebies: List[Perk], isBlacklisted: Boolean) => {
+               CheckResult(f.name, isBlacklisted, freebies)
+           }
         )
       )
 
