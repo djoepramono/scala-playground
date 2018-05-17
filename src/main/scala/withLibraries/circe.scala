@@ -5,7 +5,6 @@ import io.circe.parser._
 import io.circe.Json
 import io.circe.Decoder
 import io.circe.HCursor
-// import io.circe.parser
 
 /**
  * As of Scala 12, you need the following in your .sbt

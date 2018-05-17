@@ -4,7 +4,6 @@ version := "1.0"
 
 scalaVersion := "2.12.1"
 
-
 val circeVersion = "0.7.0"
 
 libraryDependencies ++= Seq(
