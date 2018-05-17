@@ -3,6 +3,9 @@ package net.studikode.scala.withLibraries
 import io.circe.generic.auto._
 import io.circe.parser._
 import io.circe.Json
+import io.circe.Decoder
+import io.circe.HCursor
+// import io.circe.parser
 
 /**
  * As of Scala 12, you need the following in your .sbt
@@ -34,6 +37,18 @@ import io.circe.Json
   */
  object MyDecoder {
    def decodeJson(json: String) = decode[Team](json)
+
+   /**
+    * Instead of using case class to decode, you can use implicit function to
+    * decode it. As you can see below, this custom decoder allows decoding
+    * not to fail if the contestant has no last name
+    */
+   private implicit def contestantDecoder: Decoder[Contestant] = (c: HCursor) => {
+      for {
+        first <- c.get[String]("first_name")
+        last = c.get[String]("last_name").getOrElse("Unknown")
+      } yield Contestant(first, last)
+   }
  }
 
 /**
@@ -57,7 +72,11 @@ object Circe {
           {
             "first_name": "Mary",
             "last_name": "Jane",
-            "score:": 80
+            "score": 80
+          },
+          {
+            "first_name": "Jack",
+            "score": 65
           }
         ]
       }
@@ -87,6 +106,5 @@ object Circe {
         case Right(v) => println(s"${v.first_name} ${v.last_name} found")
       }
     }
-
   }
 }
