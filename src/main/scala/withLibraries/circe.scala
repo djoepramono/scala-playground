@@ -48,6 +48,13 @@ import io.circe.HCursor
         last = c.get[String]("last_name").getOrElse("Unknown")
       } yield Contestant(first, last)
    }
+
+   private implicit def goodContestantDecoder: Decoder[Option[Contestant]] = (c: HCursor) => {
+     for {
+       first <- c.get[String]("first_name")
+       last = c.get[String]("last_name").getOrElse("Unknown")
+     } yield Some(Contestant(first, last))
+   }
  }
 
 /**
