@@ -6,22 +6,30 @@ object Optics {
         case class Street ( number: Int, name: String );
         case class Address ( street: Street, city: String );
 
-        trait Lens[S, A] {
-            def get(s: S): A
-            def set(a: A, s:S): S
-        }
-
-        case object StreetNameLens extends Lens[Street, String] {
-            def get(s: Street): String = s.name
-            def set(n: String, s: Street) = s.copy(name = n)
-        }
+        case class Lens[S, A] (
+            get: S => A,
+            set: (S, A) => S
+        )
         
-        case object AddressLens extends Lens[Address, Street] {
-            def get(a: Address): Street = a.street
-            def set(s: Street, a: Address) = a.copy(street = s)
+        // Given a street, get/set the name
+        val streetNameLens = Lens[Street, String] (
+            get = (s: Street) => s.name,
+            set = (s: Street, n: String) => s.copy(name = n)
+        )
+        
+        // Given an address, get/set a street
+        val AddressStreetLens = Lens[Address, Street] {
+            get = (a: Address) => a.street,
+            set = (a: Address, s: Street ) => a.copy(street = s)
         }
 
-        // def overLens(get)
+        // Lens does compose
+        def composeLens[A,B,C](ab: Lens[A,B], bc: Lens[B,C]): Lens[A,C] = {
+            return Len[A,C](
+                get = bc.get(ab.get(_)),
+                set = (a: A, c: C) => ab.set(a, bc.set(ab.get(a), c))
+            )
+        }
 
     }
  }
