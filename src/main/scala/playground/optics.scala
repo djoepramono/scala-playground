@@ -52,5 +52,26 @@ object Optics {
         val output = composeLens(addressStreetLens, streetNameLens).get(myAddress)
         System.out.println(s"Using composed Lens my street name is $output");
 
+
+        // Lens Laws
+        // Identity, get a value and set it back to the object should give you identical object
+        def getSet[S, A](lens: Lens[S, A], s: S): Boolean =
+            lens.set(s, lens.get(s)) == s
+
+        val lawOutput1 = getSet[Street, String](streetNameLens, myAddress.street)
+        System.out.println(s"Identity law, if I get a value and set the value back to the object, do I get identical object? $lawOutput1")
+
+        // Retention, if you set a value and then get it. You get the value back
+        def setGet[S, A](lens: Lens[S, A], s: S, a: A): Boolean =
+            lens.get(lens.set(s, a)) == a
+
+        val lawOutput2 = setGet[Street, String](streetNameLens, myAddress.street, "Testing Street")
+        System.out.println(s"Retention law, if I set a value and get it, do I get the value back?  $lawOutput2")
+
+        // Double set, if you set twice and get the value, you get the latest value
+        def putPut[S, A](lens: Lens[S, A], s: S, a: A, b: A): Boolean =
+            lens.get(lens.set(lens.set(s, a), b)) == b
+        val lawOutput3 = putPut[Street, String](streetNameLens, myAddress.street, "Testing Street", "New Testing Street")
+        System.out.println(s"Double set law, if I set value twice, will I get the latest value back? $lawOutput3")
     }
  }
