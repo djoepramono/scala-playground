@@ -53,6 +53,14 @@ object Optics {
         System.out.println(s"Using composed Lens my street name is $output");
 
 
+        // Modify
+        def overLens[S, A](sa: Lens[S,A], f: A => A, s: S): S = {
+            return sa.set(s, f(sa.get(s)))
+        }
+
+        val output3 = overLens(streetNameLens, (a: String) => a.toUpperCase(), myAddress.street)
+        System.out.println(s"A lens can be composed with a function to modify lens value, e.g. my address is now ${output3.name}");
+
         // Lens Laws
         // Identity, get a value and set it back to the object should give you identical object
         def getSet[S, A](lens: Lens[S, A], s: S): Boolean =
