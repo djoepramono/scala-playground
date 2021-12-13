@@ -1,19 +1,19 @@
-package playground
+package playground.optics
 
-object Optics {
+object Lens {
     def main(args: Array[String]): Unit = {
-        
+
         case class Street ( number: Int, name: String );
         case class Address ( street: Street, city: String );
         val myAddress = Address(Street(123, "Test Road"), "Realtown")
         System.out.println(s"Hello my street name is ${myAddress.street.name}")
 
-        // If we want to change the street name 
+        // If we want to change the street name
         val output1 = myAddress.copy(
             street = (myAddress.street.copy(
                 name = "Copied Road")
             )
-        )        
+        )
         System.out.println(s"Using .copy my street name can be changed to ${output1.street.name}")
 
         // Introducing Lens
@@ -21,13 +21,13 @@ object Optics {
             get: S => A,
             set: (S, A) => S
         )
-        
+
         // Given a street, get/set the name
         val streetNameLens = Lens[Street, String] (
             get = (s: Street) => s.name,
             set = (s: Street, n: String) => s.copy(name = n)
         )
-        
+
         // Given an address, get/set a street
         val addressStreetLens = Lens[Address, Street] (
             get = (a: Address) => a.street,
@@ -48,7 +48,7 @@ object Optics {
                 set = (a: A, c: C) => ab.set(a, bc.set(ab.get(a), c))
             )
         }
-        
+
         val output = composeLens(addressStreetLens, streetNameLens).get(myAddress)
         System.out.println(s"Using composed Lens my street name is $output");
 
