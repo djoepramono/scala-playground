@@ -66,11 +66,18 @@ object Prism {
         System.out.println(s"The uppercased jeep driver is ${carPrism.get(y).get.driver}") // or you can use getOrElse just in case y is actually a Plane
 
         // Yup it's composable
-        // def composePrism[A,B,C](ab: Prism[A,B], bc: Prism[B,C]): Prism[A,C] = {
-        //     return Prism[A,C](
-        //         get = (a: A) => bc.get(ab.get(a)),
-        //         set = (a: A, c: C) => ab.set(a, bc.set(ab.get(a), c))
-        //     )
-        // }
+        def composePrism[A,B,C](ab: Prism[A,B], bc: Prism[B,C]): Prism[A,C] = {
+            return Prism[A,C](
+                get = (a: A) => ab.get(a) match {
+                    case None => None
+                    case Some(value) => bc.get(value)
+                },
+                // set = (a: A, c: C) => ab.set(a, bc.set(ab.get(a), c))
+                set = (a: A, c: C) => ab.get(a) match {
+                    case None => a
+                    case Some(value) => ab.set(a, bc.set(value, c))
+                }
+            )
+        }
     }
 }
