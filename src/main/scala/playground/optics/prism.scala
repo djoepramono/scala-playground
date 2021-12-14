@@ -32,7 +32,7 @@ object Prism {
         // case class Plane(controller: String) extends Vehicle
 
 
-        val CarPrism =  Prism[Vehicle, Car](
+        val carPrism =  Prism[Vehicle, Car](
             get = (v: Vehicle) => v match {
                 case x: Plane => None
                 case x: Car => Some(x)
@@ -43,11 +43,11 @@ object Prism {
             }
         )
 
-        val jeep = Car("Jake")
+        val sedan = Car("Jake")
         val jet = Plane("Jess")
 
-        System.out.println(s"The jeep controller is ${(CarPrism.get(jeep).getOrElse(Car("unknown"))).driver}") 
-        System.out.println(s"The jet controller is ${(CarPrism.get(jet).getOrElse(Car("unknown"))).driver}")
+        System.out.println(s"The jeep driver is ${(carPrism.get(sedan).getOrElse(Car("unknown"))).driver}") 
+        System.out.println(s"The jet driver is ${(carPrism.get(jet).getOrElse(Car("unknown"))).driver}")
         
 
         // Over prism
@@ -58,7 +58,12 @@ object Prism {
             }
         }
 
-        // System.out.println(s"The jeep controller is uppercased ${overPrism(ControllerPrism, (a: String) => a.toUpperCase(), jeep)}")
+        val upperCaseDriver = (c: Car) => c.copy(driver = c.driver.toUpperCase())
+        val y = overPrism(carPrism, upperCaseDriver, sedan)
+        System.out.println(s"The uppercased jeep driver is ${y}") // this return a Car(JAKE) but y is Vehicle
+        
+        // Let's use carPrism to make things better
+        System.out.println(s"The uppercased jeep driver is ${carPrism.get(y).get.driver}") // or you can use getOrElse just in case y is actually a Plane
 
         // Yup it's composable
         // def composePrism[A,B,C](ab: Prism[A,B], bc: Prism[B,C]): Prism[A,C] = {
