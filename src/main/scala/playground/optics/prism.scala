@@ -12,21 +12,34 @@ object Prism {
         )
 
         // Staff and direct report
-        case class Staff(name: String, directReport: Option[String])
+        // This is wrong
+        // case class Staff(name: String, directReport: Option[String])
+
+        // It's all about sum types not product types
+        sealed trait Vehicle
+        case class Car(driver: String) extends Vehicle
+        case class Plane(pilot: String) extends Vehicle
 
 
-        val DirectReportPrism =  Prism[Staff, String](
-            get = (s: Staff) => s.directReport,
-            set = (s: Staff, d: String) => s.copy(directReport = Some(d))
+        val ControllerPrism =  Prism[Vehicle, String](
+            get = (v: Vehicle) => v match {
+                case Plane(pilot) => Some(pilot)
+                case Car(driver) => Some(driver)
+            },
+            set = (v: Vehicle, s: String) => v match {
+                case x: Plane => x.copy(pilot = s)
+                case x: Car => x.copy(driver = s)
+            }
         )
 
-        val john = Staff("John", Some("Jack"))
+        val jeep = Car("Jake")
+        val jet = Plane("Jess")
 
-        System.out.println(DirectReportPrism.get(john))
+        System.out.println(ControllerPrism.get(jeep))
         
         // Yup it's composable
-        // def composePrism[A,B,C](ab: Prism[A,B], bc: Prism[B,C]): Lens[A,C] = {
-        //     return Lens[A,C](
+        // def composePrism[A,B,C](ab: Prism[A,B], bc: Prism[B,C]): Prism[A,C] = {
+        //     return Prism[A,C](
         //         get = (a: A) => bc.get(ab.get(a)),
         //         set = (a: A, c: C) => ab.set(a, bc.set(ab.get(a), c))
         //     )
