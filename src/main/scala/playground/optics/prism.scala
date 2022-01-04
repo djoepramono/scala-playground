@@ -31,7 +31,7 @@ object Prism {
 
         sealed trait Vehicle
         case class Car(driver: String) extends Vehicle        
-        case class Plane(pilot: String) extends Vehicle
+        case class Plane(pilot: Pilot) extends Vehicle
 
         // Still cannot figure out the nested sum types
         // For example Sedan and Hatchback as a subtype of Car
@@ -52,8 +52,6 @@ object Prism {
         )
 
         val sedan = Car("Jake")
-        val jet = Plane("Jess")
-
         System.out.println(s"The sedan driver is ${driverPrism.get(sedan).getOrElse("unknown")}")         
         
 
@@ -88,14 +86,37 @@ object Prism {
         }
 
         // Do not have time to get an example of composed prism
-        // But it would be something like getting Driver's Uber Account, since Driver can be UberDriver or NonUberDriver
-        // The problem here is, Car is a case class, not sure if we can easily split it.
-        // We depends on extends to create a sum type but we cannot create a case class that extend case class
+        // But it would be something like getting Pilot's commerical licence, since Driver can be CommercialPilot or PrivatePilot        
 
-        // sealed trait Driver
-        // case class UberDriver(name: String, uberId: String) extends Driver
-        // case class NonUberDriver(name: String) extends Driver
+        sealed trait Pilot
+        case class CommercialPilot(name: String, commercialLicence: String) extends Pilot
+        case class PrivatePilot(name: String) extends Pilot
     
-        
+        val commercialLicencePrism =  Prism[Pilot, String](
+            get = (p: Pilot) => p match {
+                case x: PrivatePilot => None
+                case x: CommercialPilot => Some(x.commercialLicence)
+            },
+            set = (p: Pilot, l: String) => p match {
+                case x: PrivatePilot => p
+                case x: CommercialPilot => x.copy(commercialLicence = l)
+            }
+        )
+
+        val pilotPrism =  Prism[Vehicle, Pilot](
+            get = (v: Vehicle) => v match {
+                case x: Car => None
+                case x: Plane => Some(x.pilot)
+            },
+            set = (v: Vehicle, p: Pilot) => v match {
+                case x: Car => v
+                case x: Plane => x.copy(pilot = p)
+            }
+        )        
+
+        val jet = Plane(CommercialPilot("Jess", "COM123"))
+        val maybeCommercialLicence = composePrism(pilotPrism, commercialLicencePrism).get(jet)
+
+        System.out.println(s"The jet pilot commercial licence is ${maybeCommercialLicence.getOrElse("unknown")}")
     }
 }
