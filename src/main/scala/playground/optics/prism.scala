@@ -4,54 +4,57 @@ object Prism {
     def main(args: Array[String]): Unit = {
 
         // Prism is like Lens
-        // Except that it works on optional type*
-        // For simplicity, we would just hardcode Option i.e. Option is not in the type param
-        // A is a subtype of S
-        // or is this Optional? i.e. another optic. not prism. Nope it is not because the signature of `set`
+        // From Monocle website: It is an optic used to select part of a Sum type
+        
         case class Prism[S, A] (
             get: S => Option[A],
             set: (S, A) => S
         )
 
-        // Staff and direct report
-        // This is wrong
-        // case class Staff(name: String, directReport: Option[String])
+        // It's not straight forward
+        // You need a sum type
+        // Then you need to get the part of the subtype, which is a product type
 
-        // It's all about sum types not product types        
-        // For example Car is a subtype of Vehicle
-        // Just like Some[A] and None is a subtype of Option[A]
-        // As for the properties inside, really it doesn't matter
-        // The gotcha for Scala 2, nested sum types is a bit weird. You need `with`
-        sealed trait Car
+        // Let's see some example
+        // Staff and direct report
+        // case class Staff(name: String, directReport: Option[String]) --> not really, there's no sum type
+        
+       
+        // Vehicles
+        // For example Plane and Car is a subtype of Vehicle
+        // Car has a Driver
+        // Plane on the other hand has Pilot
+        
+        // It's like getting a Driver from Vehicle, or getting a Pilot from Vehicle
+        // We are looking at both combination of sum types and product types
+        // Whilst Lens only worry about product types
+
         sealed trait Vehicle
-        case class Sedan(driver: String) extends Car with Vehicle
-        case class Hatchback(driver: String) extends Car with Vehicle
+        case class Car(driver: String) extends Vehicle        
         case class Plane(pilot: String) extends Vehicle
 
-        // It should be
-        // note that the struct is similar between Car and Plane
-        // nah nvm this is wrong
-        // sealed trait Vehicle
-        // case class Car(controller: String) extends Vehicle
-        // case class Plane(controller: String) extends Vehicle
+        // Still cannot figure out the nested sum types
+        // For example Sedan and Hatchback as a subtype of Car
+        // So still can't figure out the correct implementation of Car, especially how to construct/create a copy
+        // Let's skip that bit for now
+        // Let's assume that our Prism category only deal with 1 layer of sum type morphism
+    
 
-
-        val carPrism =  Prism[Vehicle, Car](
+        val driverPrism =  Prism[Vehicle, String](
             get = (v: Vehicle) => v match {
                 case x: Plane => None
-                case x: Car => Some(x)
+                case x: Car => Some(x.driver)
             },
-            set = (v: Vehicle, s: Car) => v match {
+            set = (v: Vehicle, d: String) => v match {
                 case x: Plane => v
-                case x: Car => s
+                case x: Car => x.copy(driver = d)
             }
         )
 
         val sedan = Car("Jake")
         val jet = Plane("Jess")
 
-        System.out.println(s"The jeep driver is ${(carPrism.get(sedan).getOrElse(Car("unknown"))).driver}") 
-        System.out.println(s"The jet driver is ${(carPrism.get(jet).getOrElse(Car("unknown"))).driver}")
+        System.out.println(s"The sedan driver is ${driverPrism.get(sedan).getOrElse("unknown")}")         
         
 
         // Over prism
@@ -62,12 +65,12 @@ object Prism {
             }
         }
 
-        val upperCaseDriver = (c: Car) => c.copy(driver = c.driver.toUpperCase())
-        val y = overPrism(carPrism, upperCaseDriver, sedan)
-        System.out.println(s"The uppercased jeep driver is ${y}") // this return a Car(JAKE) but y is Vehicle
+        val upperCaseDriver = (d: String) => d.toUpperCase()
+        val y = overPrism(driverPrism, upperCaseDriver, sedan)
+        System.out.println(s"The uppercased jeep driver is ${y}") // this return a Car(JAKE) but y is Vehicle not a Car
         
         // Let's use carPrism to make things better
-        System.out.println(s"The uppercased jeep driver is ${carPrism.get(y).get.driver}") // or you can use getOrElse just in case y is actually a Plane
+        System.out.println(s"The uppercased jeep driver is ${driverPrism.get(y).getOrElse("unknown")}") // or you can use getOrElse just in case y is actually a Plane
 
         // Yup it's composable
         def composePrism[A,B,C](ab: Prism[A,B], bc: Prism[B,C]): Prism[A,C] = {
@@ -83,5 +86,16 @@ object Prism {
                 }
             )
         }
+
+        // Do not have time to get an example of composed prism
+        // But it would be something like getting Driver's Uber Account, since Driver can be UberDriver or NonUberDriver
+        // The problem here is, Car is a case class, not sure if we can easily split it.
+        // We depends on extends to create a sum type but we cannot create a case class that extend case class
+
+        // sealed trait Driver
+        // case class UberDriver(name: String, uberId: String) extends Driver
+        // case class NonUberDriver(name: String) extends Driver
+    
+        
     }
 }
