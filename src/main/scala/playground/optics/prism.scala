@@ -17,11 +17,15 @@ object Prism {
         // This is wrong
         // case class Staff(name: String, directReport: Option[String])
 
-        // It's all about sum types not product types
-        // Actually no this is also wrong
-        // is it? maybe not
+        // It's all about sum types not product types        
+        // For example Car is a subtype of Vehicle
+        // Just like Some[A] and None is a subtype of Option[A]
+        // As for the properties inside, really it doesn't matter
+        // The gotcha for Scala 2, nested sum types is a bit weird. You need `with`
+        sealed trait Car
         sealed trait Vehicle
-        case class Car(driver: String) extends Vehicle
+        case class Sedan(driver: String) extends Car with Vehicle
+        case class Hatchback(driver: String) extends Car with Vehicle
         case class Plane(pilot: String) extends Vehicle
 
         // It should be
