@@ -116,3 +116,81 @@ Let's see it in action
 ----
 
 # Questions?
+
+----
+
+# Let's move to Prism
+
+Similar to lens, Prism is a way to get a reference to a subpart of SUM type
+
+```scala
+case class Prism[S, A] (
+    get: S => Option[A],
+    set: (S, A) => S
+)
+```
+
+----
+
+# Let's look at an example
+
+```scala
+sealed trait Vehicle
+case class Car(driver: String) extends Vehicle        
+case class Plane(pilot: Pilot) extends Vehicle
+```
+
+Given a vehicle, how do I get the driver?
+
+----
+
+# Driver prism would look like this
+
+```scala
+val driverPrism =  Prism[Vehicle, String](
+    get = (v: Vehicle) => v match {
+        case x: Plane => None
+        case x: Car => Some(x.driver)
+    },
+    set = (v: Vehicle, d: String) => v match {
+        case x: Plane => v
+        case x: Car => x.copy(driver = d)
+    }
+)
+```
+
+Because a driver is not always available for every vehicle, in this case the return type is an `Option`
+
+----
+
+# Let's see it in action
+
+----
+
+# And yes, Prism is composable
+
+```scala
+def composePrism[A,B,C](ab: Prism[A,B], bc: Prism[B,C]): Prism[A,C] = {
+    return Prism[A,C](
+        get = (a: A) => ab.get(a) match {
+            case None => None
+            case Some(value) => bc.get(value)
+        },
+        // set = (a: A, c: C) => ab.set(a, bc.set(ab.get(a), c))
+        set = (a: A, c: C) => ab.get(a) match {
+            case None => a
+            case Some(value) => ab.set(a, bc.set(value, c))
+        }
+    )
+}
+```
+
+----
+
+# Let's see it in action
+
+----
+
+# That's the end
+
+Is there any questions?
