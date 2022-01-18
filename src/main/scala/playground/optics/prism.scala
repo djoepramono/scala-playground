@@ -76,8 +76,7 @@ object Prism {
                 get = (a: A) => ab.get(a) match {
                     case None => None
                     case Some(value) => bc.get(value)
-                },
-                // set = (a: A, c: C) => ab.set(a, bc.set(ab.get(a), c))
+                },                
                 set = (a: A, c: C) => ab.get(a) match {
                     case None => a
                     case Some(value) => ab.set(a, bc.set(value, c))

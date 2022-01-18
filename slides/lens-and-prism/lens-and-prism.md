@@ -1,6 +1,6 @@
 # Lens and Prism
 
-with Joe 
+with Joe from Developer
 
 ----
 
@@ -28,6 +28,12 @@ val myNewAddress = myAddress.copy(
 ```
 ----
 
+# Let's try it in the code
+
+Hopefully you memorise the implementation just now from the slide
+
+---
+
 # Is there anything wrong with it?
 
 Nope, it's easy to understand and it's not mutating the data
@@ -44,7 +50,7 @@ Is there a more composable way of doing this?
 
 # Let's have a look at lens
 
-It's a reference to a subpart of some data type
+It's a set of function to interact with a subpart of some data type
 
 ```scala
 case class Lens[S, A] (
@@ -103,7 +109,9 @@ def overLens[S, A](sa: Lens[S,A], f: A => A, s: S): S = {
 }
 ```
 
-Let's see it in action
+----
+
+# Let's see it in action
 
 ----
 
@@ -175,8 +183,7 @@ def composePrism[A,B,C](ab: Prism[A,B], bc: Prism[B,C]): Prism[A,C] = {
         get = (a: A) => ab.get(a) match {
             case None => None
             case Some(value) => bc.get(value)
-        },
-        // set = (a: A, c: C) => ab.set(a, bc.set(ab.get(a), c))
+        },        
         set = (a: A, c: C) => ab.get(a) match {
             case None => a
             case Some(value) => ab.set(a, bc.set(value, c))

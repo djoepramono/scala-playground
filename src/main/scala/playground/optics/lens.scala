@@ -16,6 +16,8 @@ object Lens {
         )
         System.out.println(s"Using .copy my street name can be changed to ${output1.street.name}")
 
+        // Let's get back to the presentation
+
         // Introducing Lens
         case class Lens[S, A] (
             get: S => A,
@@ -40,6 +42,7 @@ object Lens {
         // set
         System.out.println(s"Using Lens.set my street name can be changed to ${streetNameLens.set(myAddress.street, "New Test Road").name}")
 
+        // Let's get back to the presentation
 
         // Lens does compose
         def composeLens[A,B,C](ab: Lens[A,B], bc: Lens[B,C]): Lens[A,C] = {
@@ -52,6 +55,7 @@ object Lens {
         val output = composeLens(addressStreetLens, streetNameLens).get(myAddress)
         System.out.println(s"Using composed Lens my street name is $output");
 
+        // Let's get back to the presentation
 
         // Modify
         def overLens[S, A](sa: Lens[S,A], f: A => A, s: S): S = {
