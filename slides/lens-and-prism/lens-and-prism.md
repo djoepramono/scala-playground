@@ -1,4 +1,4 @@
-# Lens and Prism
+# Lens and Prism (maybe)
 
 with Joe from Developer
 
@@ -40,13 +40,19 @@ Nope, it's easy to understand and it's not mutating the data
 
 ----
 
+# George Wilson touched on this topic
+
+![](./assets/gw-when-lens-was-introduced.png)
+
+----
+
 # Some of you might or might not have asked
 
-What if it is deeply nested? 
+What if it is deeply nested?
 
 Is there a more composable way of doing this?
 
----- 
+----
 
 # Let's have a look at lens
 
@@ -144,7 +150,7 @@ case class Prism[S, A] (
 
 ```scala
 sealed trait Vehicle
-case class Car(driver: String) extends Vehicle        
+case class Car(driver: String) extends Vehicle
 case class Plane(pilot: Pilot) extends Vehicle
 ```
 
@@ -183,7 +189,7 @@ def composePrism[A,B,C](ab: Prism[A,B], bc: Prism[B,C]): Prism[A,C] = {
         get = (a: A) => ab.get(a) match {
             case None => None
             case Some(value) => bc.get(value)
-        },        
+        },
         set = (a: A, c: C) => ab.get(a) match {
             case None => a
             case Some(value) => ab.set(a, bc.set(value, c))
