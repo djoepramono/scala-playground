@@ -8,7 +8,8 @@ object Prism {
         
         case class Prism[S, A] (
             get: S => Option[A],
-            set: (S, A) => S
+            set: (S, A) => S, // not sure if this is a thing
+            // build: (A) => S // this seems to be more prevalent in scala/haskell land
         )
 
         // It's not straight forward
@@ -51,9 +52,13 @@ object Prism {
             }
         )
 
+        // Get example
         val sedan = Car("Jake")
         System.out.println(s"The sedan driver is ${driverPrism.get(sedan).getOrElse("unknown")}")         
         
+        // Set example        
+        System.out.println(s"The sedan can be updated with a new driver ${driverPrism.set(sedan, "John")}")
+        // If you wonder why you cannot do `.driver`, that because it's Vehicle no Car
 
         // Over prism
         def overPrism[S,A](sa: Prism[S,A], f: A => A, s:S): S = {
@@ -117,5 +122,6 @@ object Prism {
         val maybeCommercialLicence = composePrism(pilotPrism, commercialLicencePrism).get(jet)
 
         System.out.println(s"The jet pilot commercial licence is ${maybeCommercialLicence.getOrElse("unknown")}")
+
     }
 }
