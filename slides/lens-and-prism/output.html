@@ -118,6 +118,33 @@
 </span></span></foreignObject></svg></code></pre>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18">
+<h1>Wait a second ... that first Prism slide is weird</h1>
+<p>I don't recognise that Prism signature. And why is it using Optional?</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19">
+<h1>That's a very good question</h1>
+<p>With my limited understanding of Prism, really what I'm talking about here is an Optics called Optional instead of Prism</p>
+<p>Which I have no idea, if such Optics actually exists in other language</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20">
+<h1>Haskell Optics Subtype Hierarchy</h1>
+<p><img src="./assets/haskell-optics-subtype-hierarchy.png" alt="" /></p>
+<p>Where is Optional?</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21">
+<h1>Let's have a glance at what a Prism signature could look like</h1>
+<pre><code class="language-scala"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="hljs-keyword">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Prism</span>[<span class="hljs-type">S</span>, <span class="hljs-type">A</span>](<span class="hljs-params">_getOption: <span class="hljs-type">S</span> =&gt; <span class="hljs-type">Option</span>[<span class="hljs-type">A</span>]</span>)(<span class="hljs-params">_reverseGet: <span class="hljs-type">A</span> =&gt; <span class="hljs-type">S</span></span>) </span>{
+  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">getOption</span></span>(s: <span class="hljs-type">S</span>): <span class="hljs-type">Option</span>[<span class="hljs-type">A</span>] = _getOption(s)
+  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">reverseGet</span></span>(a: <span class="hljs-type">A</span>): <span class="hljs-type">S</span> = _reverseGet(a)
+}
+</span></span></foreignObject></svg></code></pre>
+<p>OK I admit, it's overly simplified. But if you are confused with the syntax, here's the break down</p>
+<ul>
+<li>It's curried type constructor.</li>
+<li>And it is followed by straight by an inline companion objects that put the supplied parameters into use in a function</li>
+</ul>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22">
 <h1>Let's look at an example</h1>
 <pre><code class="language-scala"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="hljs-keyword">sealed</span> <span class="hljs-class"><span class="hljs-keyword">trait</span> <span class="hljs-title">Vehicle</span></span>
 <span class="hljs-keyword">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Car</span>(<span class="hljs-params">driver: <span class="hljs-type">String</span></span>) <span class="hljs-keyword">extends</span> <span class="hljs-title">Vehicle</span></span>
@@ -125,7 +152,7 @@
 </span></span></foreignObject></svg></code></pre>
 <p>Given a vehicle, how do I get the driver?</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23">
 <h1>Driver prism would look like this</h1>
 <pre><code class="language-scala"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="hljs-keyword">val</span> driverPrism =  <span class="hljs-type">Prism</span>[<span class="hljs-type">Vehicle</span>, <span class="hljs-type">String</span>](
     get = (v: <span class="hljs-type">Vehicle</span>) =&gt; v <span class="hljs-keyword">match</span> {
@@ -140,10 +167,10 @@
 </span></span></foreignObject></svg></code></pre>
 <p>Because a driver is not always available for every vehicle, in this case the return type is an <code>Option</code></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24">
 <h1>Let's see it in action</h1>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25">
 <h1>And yes, Prism is composable</h1>
 <pre><code class="language-scala"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">composePrism</span></span>[<span class="hljs-type">A</span>,<span class="hljs-type">B</span>,<span class="hljs-type">C</span>](ab: <span class="hljs-type">Prism</span>[<span class="hljs-type">A</span>,<span class="hljs-type">B</span>], bc: <span class="hljs-type">Prism</span>[<span class="hljs-type">B</span>,<span class="hljs-type">C</span>]): <span class="hljs-type">Prism</span>[<span class="hljs-type">A</span>,<span class="hljs-type">C</span>] = {
     <span class="hljs-keyword">return</span> <span class="hljs-type">Prism</span>[<span class="hljs-type">A</span>,<span class="hljs-type">C</span>](
@@ -159,12 +186,15 @@
 }
 </span></span></foreignObject></svg></code></pre>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26">
 <h1>Let's see it in action</h1>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27">
 <h1>That's the end</h1>
 <p>Is there any questions?</p>
+<p>References:<br />
+<a href="https://medium.com/@gcanti/introduction-to-optics-lenses-and-prisms-3230e73bfcfe">https://medium.com/@gcanti/introduction-to-optics-lenses-and-prisms-3230e73bfcfe</a><br />
+<a href="https://medium.com/zyseme-technology/functional-references-lens-and-other-optics-in-scala-e5f7e2fdafe">https://medium.com/zyseme-technology/functional-references-lens-and-other-optics-in-scala-e5f7e2fdafe</a></p>
 </section>
 <script>!function(){"use strict";const t="marpitSVGPolyfill:setZoomFactor,",e=Symbol();let r,o;function n(n){const i="object"==typeof n&&n.target||document,a="object"==typeof n?n.zoom:n;window[e]||(Object.defineProperty(window,e,{configurable:!0,value:!0}),window.addEventListener("message",(({data:e,origin:r})=>{if(r===window.origin)try{if(e&&"string"==typeof e&&e.startsWith(t)){const[,t]=e.split(","),r=Number.parseFloat(t);Number.isNaN(r)||(o=r)}}catch(t){console.error(t)}})));let l=!1;Array.from(i.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,n,i,s;t.style.transform||(t.style.transform="translateZ(0)");const c=a||o||t.currentScale||1;r!==c&&(r=c,l=c);const d=t.getBoundingClientRect(),{length:u}=t.children;for(let r=0;r<u;r+=1){const o=t.children[r],a=o.getScreenCTM();if(a){const t=null!==(n=null===(e=o.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==n?n:0,r=null!==(s=null===(i=o.y)||void 0===i?void 0:i.baseVal.value)&&void 0!==s?s:0,l=o.firstElementChild,{style:u}=l;u.transformOrigin||(u.transformOrigin=`${-t}px ${-r}px`),u.transform=`scale(${c}) matrix(${a.a}, ${a.b}, ${a.c}, ${a.d}, ${a.e-d.left}, ${a.f-d.top}) translateZ(0.0001px)`}}})),!1!==l&&Array.from(i.querySelectorAll("iframe"),(({contentWindow:e})=>{null==e||e.postMessage(`${t}${l}`,"null"===window.origin?"*":window.origin)}))}r=1,o=void 0;const i=(t,e,r)=>{if(t.getAttribute(e)!==r)return t.setAttribute(e,r),!0};function a({once:t=!1,target:e=document}={}){const r="Apple Computer, Inc."===navigator.vendor?[n]:[];let o=!t;const a=()=>{for(const t of r)t({target:e});!function(t=document){Array.from(t.querySelectorAll('svg[data-marp-fitting="svg"]'),(t=>{var e;const r=t.firstChild,o=r.firstChild,{scrollWidth:n,scrollHeight:a}=o;let l,s=1;if(t.hasAttribute("data-marp-fitting-code")&&(l=null===(e=t.parentElement)||void 0===e?void 0:e.parentElement),t.hasAttribute("data-marp-fitting-math")&&(l=t.parentElement),l){const t=getComputedStyle(l),e=Math.ceil(l.clientWidth-parseFloat(t.paddingLeft||"0")-parseFloat(t.paddingRight||"0"));e&&(s=e)}const c=Math.max(n,s),d=Math.max(a,1),u=`0 0 ${c} ${d}`;i(r,"width",`${c}`),i(r,"height",`${d}`),i(t,"preserveAspectRatio",getComputedStyle(t).getPropertyValue("--preserve-aspect-ratio")||"xMinYMin meet"),i(t,"viewBox",u)&&t.classList.toggle("__reflow__")}))}(e),o&&window.requestAnimationFrame(a)};return a(),()=>{o=!1}}const l=Symbol(),s=document.currentScript;((t=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(t[l])return t[l];const e=a({target:t}),r=()=>{e(),delete t[l]};Object.defineProperty(t,l,{configurable:!0,value:r})})(s?s.getRootNode():document)}();
 </script></foreignObject></svg></div><script>/*!! License: https://unpkg.com/@marp-team/marp-cli@1.5.0/lib/bespoke.js.LICENSE.txt */

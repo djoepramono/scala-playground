@@ -146,6 +146,47 @@ case class Prism[S, A] (
 
 ----
 
+# Wait a second ... that first Prism slide is weird
+
+I don't recognise that Prism signature. And why is it using Optional?
+
+----
+
+# That's a very good question
+
+With my limited understanding of Prism, really what I'm talking about here is an Optics called Optional instead of Prism
+
+I have no idea, if such Optics actually exists in other language
+
+----
+
+# Haskell Optics Subtype Hierarchy
+
+![](./assets/haskell-optics-subtype-hierarchy.png)
+
+Where is Optional?
+
+----
+# Let's have a glance at what a Prism signature could look like
+
+```scala
+case class Prism[S, A](_getOption: S => Option[A])(_reverseGet: A => S) {
+  def getOption(s: S): Option[A] = _getOption(s)
+  def reverseGet(a: A): S = _reverseGet(a)
+}
+```
+
+OK I admit, it's overly simplified. But if you are confused with the syntax, here's the break down
+- It's ~curried~ partially applied type constructor.
+- And it is followed by straight by an inline companion objects that put the supplied parameters into use in a function
+
+----
+
+# Too complicated
+
+For now let's actually go back to Optional, or refer to it as Prism
+
+----
 # Let's look at an example
 
 ```scala
@@ -207,3 +248,8 @@ def composePrism[A,B,C](ab: Prism[A,B], bc: Prism[B,C]): Prism[A,C] = {
 # That's the end
 
 Is there any questions?
+
+References:
+https://medium.com/@gcanti/introduction-to-optics-lenses-and-prisms-3230e73bfcfe
+https://medium.com/zyseme-technology/functional-references-lens-and-other-optics-in-scala-e5f7e2fdafe
+https://github.com/optics-dev/Monocle/blob/master/docs/src/main/mdoc/optics/prism.md
