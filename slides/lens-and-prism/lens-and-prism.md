@@ -133,6 +133,14 @@ def overLens[S, A](sa: Lens[S,A], f: A => A, s: S): S = {
 
 ----
 
+# A Quick Recap on what Lens is
+
+It's a set of function to interact with a subpart of some data type
+
+The data type in this sentence is a product type e.g. the name of a street in an address.
+
+----
+
 # Let's move to Prism
 
 Similar to lens, Prism is a way to get a reference to a subpart of SUM type
@@ -177,7 +185,7 @@ case class Prism[S, A](_getOption: S => Option[A])(_reverseGet: A => S) {
 ```
 
 OK I admit, it's overly simplified. But if you are confused with the syntax, here's the break down
-- It's ~curried~ partially applied type constructor.
+- It's curried(?)/partially applied type constructor.
 - And it is followed by straight by an inline companion objects that put the supplied parameters into use in a function
 
 ----
@@ -222,6 +230,22 @@ Because a driver is not always available for every vehicle, in this case the ret
 
 ----
 
+# Over Prism
+
+```scala
+def overPrism[S,A](sa: Prism[S,A], f: A => A, s:S): S = {
+    sa.get(s) match {
+        case Some(value) => sa.set(s, f(value))
+        case None => s
+    }
+}
+```
+
+----
+
+# Let's see it in action
+
+----
 # And yes, Prism is composable
 
 ```scala
@@ -242,6 +266,12 @@ def composePrism[A,B,C](ab: Prism[A,B], bc: Prism[B,C]): Prism[A,C] = {
 ----
 
 # Let's see it in action
+
+----
+
+# Prism Law
+
+It's a double round trip of setget and getset. Let's see the code
 
 ----
 
