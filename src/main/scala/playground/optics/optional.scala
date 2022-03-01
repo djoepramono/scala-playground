@@ -1,6 +1,6 @@
 package playground.optics
 
-object Prism {
+object Optional {
     def main(args: Array[String]): Unit = {
 
         // Prism is like Lens
